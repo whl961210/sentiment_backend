@@ -6,3 +6,4 @@ scikit-learn
 scipy
 waitress
 google-api-python-client
+regex
