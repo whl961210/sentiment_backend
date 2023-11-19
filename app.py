@@ -77,7 +77,7 @@ def calculate_sentiment_percentages():
         return jsonify({'error': 'Invalid or missing sentiments data'}), 400
 
     sentiment_df = pd.DataFrame(sentiments, columns=['Sentiment'])
-    sentiment_counts = sentiment_df['Sentiment'].value_counts(normalize=True) * 100
+    sentiment_counts = sentiment_df['Sentiment'].value_counts(normalize=True) * 500
     sentiment_percentages = sentiment_counts.to_dict()
 
     return jsonify({'sentiment_percentages': sentiment_percentages})
