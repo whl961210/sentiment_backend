@@ -14,7 +14,7 @@ def get_youtube_comments(video_id):
     request = youtube.commentThreads().list(
         part="snippet",
         videoId=video_id,
-        maxResults=1000
+        maxResults=500
     )
     response = request.execute()
 
@@ -32,12 +32,12 @@ def get_youtube_comments(video_id):
                 comment['likeCount'],
                 text
             ])'''
-        comment.append([
+        comments.append([
             comment['authorDisplayName'],
             comment['publishedAt'],
             comment['updatedAt'],
             comment['likeCount'],
-            text
+            comment['textDisplay']
         ])
 
     return pd.DataFrame(comments, columns=['author', 'published_at', 'updated_at', 'like_count', 'text'])
