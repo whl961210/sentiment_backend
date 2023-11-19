@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import joblib
 import pandas as pd
 from flask_cors import CORS
+from  youtube_component import get_youtube_comments
 
 app = Flask(__name__)
 CORS(app)
@@ -49,6 +50,25 @@ def upload_file():
         return jsonify(results)
 
     return jsonify({'error': 'No file selected'}), 400
+@app.route('/analyze-youtube-comments', methods=['POST'])
+def analyze_youtube_comments():
+    data = request.get_json()
+    video_id = data.get('video_id')
+
+    if not video_id:
+        return jsonify({'error': 'No video ID provided'}), 400
+
+    comments_df = get_youtube_comments(video_id)
+    processed_texts = vectorizer.transform(comments_df['text'])
+    predictions = model.predict(processed_texts)
+    
+    # Add the predictions to the DataFrame
+    comments_df['Sentiment'] = ['Positive' if pred == "1" else 'Negative' for pred in predictions]
+
+    # Convert dataframe to a list of dictionaries for JSON response
+    results = comments_df.to_dict(orient='records')
+    return jsonify(results)
+
 if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
