@@ -24,14 +24,15 @@ def get_youtube_comments(video_id):
         text = comment['textDisplay']
 
         # Regex to match non-English characters
-        '''if re.match(r"^[\w\s\p{P}]*$", text, re.UNICODE):
+        if re.match(r"^[\w\s\p{P}]*$", text, re.UNICODE):
             comments.append([
                 comment['authorDisplayName'],
                 comment['publishedAt'],
                 comment['updatedAt'],
                 comment['likeCount'],
                 text
-            ])'''
+            ])
+        '''
         comments.append([
             comment['authorDisplayName'],
             comment['publishedAt'],
@@ -39,5 +40,6 @@ def get_youtube_comments(video_id):
             comment['likeCount'],
             comment['textDisplay']
         ])
+        '''
 
     return pd.DataFrame(comments, columns=['author', 'published_at', 'updated_at', 'like_count', 'text'])
