@@ -24,7 +24,7 @@ def get_youtube_comments(video_id):
         text = comment['textDisplay']
 
         # Regex to match non-English characters
-        if re.match(r"^[\w\s\p{P}]*$", text, re.UNICODE):
+        if re.match("^[a-zA-Z0-9\s,.'-?!]*$", text):
             comments.append([
                 comment['authorDisplayName'],
                 comment['publishedAt'],
