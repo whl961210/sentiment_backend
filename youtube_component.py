@@ -1,7 +1,7 @@
 import pandas as pd
 import googleapiclient.discovery
 import os
-import re
+import regex as re
 
 def get_youtube_comments(video_id):
     api_service_name = "youtube"
