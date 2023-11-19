@@ -1,6 +1,7 @@
 import pandas as pd
 import googleapiclient.discovery
 import os
+import re
 
 def get_youtube_comments(video_id):
     api_service_name = "youtube"
@@ -20,12 +21,16 @@ def get_youtube_comments(video_id):
     comments = []
     for item in response['items']:
         comment = item['snippet']['topLevelComment']['snippet']
-        comments.append([
-            comment['authorDisplayName'],
-            comment['publishedAt'],
-            comment['updatedAt'],
-            comment['likeCount'],
-            comment['textDisplay']
-        ])
+        text = comment['textDisplay']
+
+        # Regex to match non-English characters
+        if re.match("^[a-zA-Z0-9\s,.'-?!]*$", text):
+            comments.append([
+                comment['authorDisplayName'],
+                comment['publishedAt'],
+                comment['updatedAt'],
+                comment['likeCount'],
+                text
+            ])
 
     return pd.DataFrame(comments, columns=['author', 'published_at', 'updated_at', 'like_count', 'text'])
