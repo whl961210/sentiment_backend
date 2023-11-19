@@ -68,6 +68,19 @@ def analyze_youtube_comments():
     # Convert dataframe to a list of dictionaries for JSON response
     results = comments_df.to_dict(orient='records')
     return jsonify(results)
+@app.route('/calculate-sentiment-percentages', methods=['POST'])
+def calculate_sentiment_percentages():
+    data = request.get_json()
+    sentiments = data.get('sentiments')
+
+    if not sentiments or not isinstance(sentiments, list):
+        return jsonify({'error': 'Invalid or missing sentiments data'}), 400
+
+    sentiment_df = pd.DataFrame(sentiments, columns=['Sentiment'])
+    sentiment_counts = sentiment_df['Sentiment'].value_counts(normalize=True) * 100
+    sentiment_percentages = sentiment_counts.to_dict()
+
+    return jsonify({'sentiment_percentages': sentiment_percentages})
 
 if __name__ == "__main__":
     from waitress import serve
