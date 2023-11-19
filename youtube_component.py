@@ -14,7 +14,7 @@ def get_youtube_comments(video_id):
     request = youtube.commentThreads().list(
         part="snippet",
         videoId=video_id,
-        maxResults=500
+        maxResults=1000
     )
     response = request.execute()
 
@@ -24,7 +24,7 @@ def get_youtube_comments(video_id):
         text = comment['textDisplay']
 
         # Regex to match non-English characters
-        if re.match("^[a-zA-Z0-9\s,.'-?!]*$", text):
+        if re.match(r"^[\w\s\p{P}]*$", text, re.UNICODE):
             comments.append([
                 comment['authorDisplayName'],
                 comment['publishedAt'],
