@@ -7,3 +7,4 @@ scipy
 waitress
 google-api-python-client
 regex
+flask_sqlalchemy
