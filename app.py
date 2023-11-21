@@ -3,9 +3,21 @@ import joblib
 import pandas as pd
 from flask_cors import CORS
 from  youtube_component import get_youtube_comments
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///feedback.db'
+db = SQLAlchemy(app)
 CORS(app)
+
+class UserFeedback(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    original_text = db.Column(db.String, nullable=False)
+    user_sentiment = db.Column(db.String, nullable=False)
+    user_comment = db.Column(db.String)
+
+with app.app_context():
+    db.create_all()
 
 # Load your trained model and vectorizer
 model = joblib.load('trained_model.pkl')
@@ -81,6 +93,19 @@ def calculate_sentiment_percentages():
     sentiment_percentages = sentiment_counts.to_dict()
 
     return jsonify({'sentiment_percentages': sentiment_percentages})
+
+@app.route('/submit-feedback', methods=['POST'])
+def submit_feedback():
+    data = request.get_json()
+    original_text = data.get('original_text')
+    user_sentiment = data.get('user_sentiment')
+    user_comment = data.get('user_comment')
+
+    feedback = UserFeedback(original_text=original_text, user_sentiment=user_sentiment, user_comment=user_comment)
+    db.session.add(feedback)
+    db.session.commit()
+
+    return jsonify({'message': 'Feedback submitted successfully'}), 200
 
 if __name__ == "__main__":
     from waitress import serve
