@@ -123,7 +123,22 @@ def get_feedback():
         return jsonify(feedback_list)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+    
+@app.route('/delete-feedback/<int:feedback_id>', methods=['DELETE'])
+def delete_feedback(feedback_id):
+    try:
+        # Find the feedback record by ID
+        feedback = UserFeedback.query.get(feedback_id)
+        if not feedback:
+            return jsonify({'error': 'Feedback not found'}), 404
 
+        # Delete the record
+        db.session.delete(feedback)
+        db.session.commit()
+
+        return jsonify({'message': 'Feedback deleted successfully'}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
