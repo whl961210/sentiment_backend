@@ -107,6 +107,23 @@ def submit_feedback():
 
     return jsonify({'message': 'Feedback submitted successfully'}), 200
 
+@app.route('/get-feedback', methods=['GET'])
+def get_feedback():
+    try:
+        # Query all feedback records
+        feedback_records = UserFeedback.query.all()
+
+        # Convert records to a list of dictionaries
+        feedback_list = [{"id": feedback.id, 
+                          "original_text": feedback.original_text, 
+                          "user_sentiment": feedback.user_sentiment, 
+                          "user_comment": feedback.user_comment} 
+                         for feedback in feedback_records]
+
+        return jsonify(feedback_list)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
