@@ -38,7 +38,7 @@ def analyze_text():
     prediction = model.predict(processed_text)[0]
     sentiment = 'Positive' if prediction == "1" else 'Negative'
 
-    return jsonify({'text': text, 'sentiment': sentiment})
+    return jsonify({'text': text, 'Sentiment': sentiment})
 @app.route('/upload', methods=['POST'])
 def upload_file():
     if 'file' not in request.files:
