@@ -4,6 +4,8 @@ import pandas as pd
 from flask_cors import CORS
 from  youtube_component import get_youtube_comments
 from flask_sqlalchemy import SQLAlchemy
+from flask import send_file
+import io
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////instance/feedback.db'
@@ -139,6 +141,33 @@ def delete_feedback(feedback_id):
         return jsonify({'message': 'Feedback deleted successfully'}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/export-csv', methods=['POST'])
+def export_csv():
+    data = request.get_json()
+    results = data.get('results')
+    
+    if not results or not isinstance(results, list):
+        return jsonify({'error': 'Invalid or missing results data'}), 400
+
+    # Convert data to DataFrame and then to CSV
+    try:
+        df = pd.DataFrame(results)
+        # Create a buffer to hold CSV data
+        buffer = io.StringIO()
+        df.to_csv(buffer, index=False)
+        buffer.seek(0)  # Rewind the buffer
+
+        # Create a response object, sending the buffer as a file
+        return send_file(
+            buffer,
+            as_attachment=True,
+            attachment_filename='results.csv',
+            mimetype='text/csv'
+        )
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 if __name__ == "__main__":
     from waitress import serve
     serve(app, host="0.0.0.0", port=8080)
