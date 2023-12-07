@@ -5,7 +5,7 @@ from flask_cors import CORS
 from  youtube_component import get_youtube_comments
 from flask_sqlalchemy import SQLAlchemy
 from flask import send_file
-import io
+from io import BytesIO
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////instance/feedback.db'
@@ -146,7 +146,8 @@ def delete_feedback(feedback_id):
 def export_csv():
     data = request.get_json()
     results = data.get('results')
-    
+    buffer = BytesIO()
+
     if not results or not isinstance(results, list):
         return jsonify({'error': 'Invalid or missing results data'}), 400
 
@@ -154,7 +155,6 @@ def export_csv():
     try:
         df = pd.DataFrame(results)
         # Create a buffer to hold CSV data
-        buffer = io.StringIO()
         df.to_csv(buffer, index=False)
         buffer.seek(0)  # Rewind the buffer
 
