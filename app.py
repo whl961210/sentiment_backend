@@ -162,7 +162,7 @@ def export_csv():
         return send_file(
             buffer,
             as_attachment=True,
-            attachment_filename='results.csv',
+            download_name='results.csv',
             mimetype='text/csv'
         )
     except Exception as e:
